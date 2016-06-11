@@ -35,7 +35,8 @@ def upload():
         mlong = request.form['longitude_input']
         sdate = request.form['start_date']
         edate = request.form['end_date']
-        xls_name = get_single_data(mlat, mlong, sdate, edate)
+        #xls_name = get_single_data(mlat, mlong, sdate, edate)
+        xls_name + "gda_awhere_data.xlsx"
         return send_file(xls_name, as_attachment=True)
         """
         myfile = request.files['inputFile']
