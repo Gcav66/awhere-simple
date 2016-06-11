@@ -11,8 +11,8 @@ from calendar import monthrange
 import csv
 
 
-key = 'Us9lXgPiuUvueNMlY5uz8zGBALaRpzvj'
-secret = 'RHZiOYClAaJA3t22'
+key = ''
+secret = ''
 
 class AwhereUpdate(object):
 
