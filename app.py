@@ -4,8 +4,6 @@ from AWhere_Update import AwhereUpdate
 import pandas as pd
 import os
 
-#key = 'Us9lXgPiuUvueNMlY5uz8zGBALaRpzvj'
-#secret = 'RHZiOYClAaJA3t22'
 
 def create_app():
     app=Flask(__name__)
