@@ -11,15 +11,15 @@ def create_app():
 
 app = create_app()
 
-with open("test_credentials.txt") as f:
-    data = f.read().split("\n")
-    key = data[0].strip()
-    secret = data[1].strip()
+#with open("test_credentials.txt") as f:
+    #data = f.read().split("\n")
+    #key = data[0].strip()
+    #secret = data[1].strip()
     
 
 
-def get_single_data(mlat, mlong, sdate, edate):
-    client = AwhereUpdate(key, secret)
+def get_single_data(akey, asec, mlat, mlong, sdate, edate):
+    client = AwhereUpdate(akey, asec)
     response = client.single_call(mlat, mlong, sdate, edate)
     clean = client.flatten_single(response)
     df = pd.DataFrame(clean)
@@ -32,11 +32,13 @@ def get_single_data(mlat, mlong, sdate, edate):
 def upload():
     template = 'upload_file.html'
     if request.method == 'POST':
+        akey = request.form['api_key']
+        asec = request.form['api_secret']
         mlat = request.form['latitude_input']
         mlong = request.form['longitude_input']
         sdate = request.form['start_date']
         edate = request.form['end_date']
-        xls_name = get_single_data(mlat, mlong, sdate, edate)
+        xls_name = get_single_data(akey, asec, mlat, mlong, sdate, edate)
         return send_file(xls_name, as_attachment=True)
         """
         myfile = request.files['inputFile']
@@ -48,4 +50,4 @@ def upload():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=int(port))
+    app.run(host='0.0.0.0', port=int(port), debug=True)
