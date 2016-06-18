@@ -1,5 +1,4 @@
-from flask import Flask, request, jsonify, redirect, render_template, send_file
-from flask.ext import excel
+from flask import Flask, request, redirect, render_template, send_file
 from AWhere_Update import AwhereUpdate
 import pandas as pd
 import os
