@@ -27,18 +27,44 @@ def get_single_data(akey, asec, mlat, mlong, sdate, edate):
     df_xls = df.to_excel(xls_name, index=False)
     return xls_name
 
+def get_forecast(akey, asec, mlat, mlong, sdate, edate):
+    client = AwhereUpdate(akey, asec)
+    response = client.single_forecast(mlat, mlong, sdate, edate)
+    flat = client.flatten_forecast(response)
+    df = pd.DataFrame(flat)
+    forecast_order = ['startTime', 'endTime', 'temperature_max', 'temperature_min',
+                  'temperature_unit', 'precipitation_amount', 'precipitation_chance',
+                  'precipitation_units', 'precipitation_chance', 'wind_average',
+                  'wind_max', 'wind_min', 'wind_units', 'sky_sunshine', 'solar_amount',
+                  'solar_units']
+    ordered_df = df[forecast_order]
+    xls_name = "GDA_AWHERE_Forecast_Weather.xlsx"
+    df_xls = ordered_df.to_excel(xls_name, index=False)
+    return xls_name
+
 @app.route("/", methods=['GET', 'POST'])
 def upload():
     template = 'upload_file.html'
     if request.method == 'POST':
-        akey = request.form['api_key']
-        asec = request.form['api_secret']
-        mlat = request.form['latitude_input']
-        mlong = request.form['longitude_input']
-        sdate = request.form['start_date']
-        edate = request.form['end_date']
-        xls_name = get_single_data(akey, asec, mlat, mlong, sdate, edate)
-        return send_file(xls_name, as_attachment=True)
+        if request.form['btn'] == 'observation':
+            akey = request.form['api_key']
+            asec = request.form['api_secret']
+            mlat = request.form['latitude_input']
+            mlong = request.form['longitude_input']
+            sdate = request.form['start_date']
+            edate = request.form['end_date']
+            xls_name = get_single_data(akey, asec, mlat, mlong, sdate, edate)
+            return send_file(xls_name, as_attachment=True)
+        if request.form['btn'] == 'forecast':
+            akey = request.form['api_key']
+            asec = request.form['api_secret']
+            mlat = request.form['latitude_input']
+            mlong = request.form['longitude_input']
+            sdate = request.form['start_date']
+            edate = request.form['end_date']
+            xls_name = get_forecast(akey, asec, mlat, mlong, sdate, edate)
+            return send_file(xls_name, as_attachment=True)
+
         """
         myfile = request.files['inputFile']
         myfile.save(myfile.filename)
@@ -49,4 +75,4 @@ def upload():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=int(port))
+    app.run(host='0.0.0.0', port=int(port), debug=True)

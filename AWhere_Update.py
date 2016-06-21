@@ -62,6 +62,86 @@ class AwhereUpdate(object):
                   }
           obsvData.append(myRow)
       return obsvData
+
+    def single_forecast(self, mylat, mylong, startdate='', enddate=''):
+
+        #url = self.location_url + "/" + str(mylat) + "," + str(mylong) + "/forecasts/" + \
+                  #str(startdate) + "," + str(enddate) + "/?blockSize=1"
+        if startdate and enddate:
+            url = self.location_url + "/" + str(mylat) + "," + str(mylong) + "/forecasts/" + \
+                  str(startdate) + "," + str(enddate) + "/?blockSize=1"
+        elif startdate:
+            url = self.location_url + "/" + str(mylat) + "," + str(mylong) + "/forecasts/" + \
+                  str(startdate) + "/?blockSize=1"
+        else:
+            url = self.location_url + "/" + str(mylat) + "," + str(mylong) + "/forecasts/" + "?blockSize=1"
+        print url        
+        client = self.fetch_token()
+        result = client.get(url)
+        return result.json()
+
+    def flatten_forecast(self, results):
+        try:
+            obsvData = []
+            for result in results['forecast']:
+                myRow = {}
+                myRow = {'startTime': result['startTime'],
+                         'endTime': result['endTime'],
+                         'precipitation_units': result['precipitation']['units'],
+                         'precipitation_chance': result['precipitation']['chance'],
+                         'precipitation_amount': result['precipitation']['amount'],
+                         'conditionsText': result['conditionsText'],
+                         'wind_units': result['wind']['units'],
+                         'wind_max': result['wind']['max'],
+                         'wind_min': result['wind']['min'],
+                         'wind_average': result['wind']['average'],
+                         'relativeHumidity_max': result['relativeHumidity']['max'],
+                         'relativeHumidity_average': result['relativeHumidity']['average'],
+                         'relativeHumidity_min': result['relativeHumidity']['min'],
+                         'solar_units': result['solar']['units'],
+                         'solar_amount': result['solar']['amount'],
+                         'dewPoint_units': result['dewPoint']['units'],
+                         'dewPoint_units': result['dewPoint']['amount'],
+                         'conditionsCode': result['conditionsCode'],
+                         'sky_sunshine': result['sky']['sunshine'],
+                         'sky_cloudCover': result['sky']['cloudCover'],
+                         'temperature_unit': result['temperatures']['units'],
+                         'temperature_max': result['temperatures']['max'],
+                         'temperature_min': result['temperatures']['min']
+                        }
+                obsvData.append(myRow)
+            return obsvData
+        except KeyError:
+            obsvData = []
+            for day in results['forecasts']:
+                for result in day['forecast']:
+                    myRow = {}
+                    myRow = {'startTime': result['startTime'],
+                             'endTime': result['endTime'],
+                             'precipitation_units': result['precipitation']['units'],
+                             'precipitation_chance': result['precipitation']['chance'],
+                             'precipitation_amount': result['precipitation']['amount'],
+                             'conditionsText': result['conditionsText'],
+                             'wind_units': result['wind']['units'],
+                             'wind_max': result['wind']['max'],
+                             'wind_min': result['wind']['min'],
+                             'wind_average': result['wind']['average'],
+                             'relativeHumidity_max': result['relativeHumidity']['max'],
+                             'relativeHumidity_average': result['relativeHumidity']['average'],
+                             'relativeHumidity_min': result['relativeHumidity']['min'],
+                             'solar_units': result['solar']['units'],
+                             'solar_amount': result['solar']['amount'],
+                             'dewPoint_units': result['dewPoint']['units'],
+                             'dewPoint_units': result['dewPoint']['amount'],
+                             'conditionsCode': result['conditionsCode'],
+                             'sky_sunshine': result['sky']['sunshine'],
+                             'sky_cloudCover': result['sky']['cloudCover'],
+                             'temperature_unit': result['temperatures']['units'],
+                             'temperature_max': result['temperatures']['max'],
+                             'temperature_min': result['temperatures']['min']
+                            }
+                    obsvData.append(myRow)
+                return obsvData
     
     def flatten_batch(self, results):
         obsvData = []
