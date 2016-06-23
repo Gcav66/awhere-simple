@@ -39,7 +39,7 @@ class AwhereUpdate(object):
     def single_call(self, mylat, mylong, startdate, enddate):
 
         url = self.location_url + "/" + str(mylat) + "," + str(mylong) + "/observations/" + \
-                  str(startdate) + "," + str(enddate) + "/?blockSize=1"
+                  str(startdate) + "," + str(enddate) + "/?limit=120"
         print url        
         client = self.fetch_token()
         result = client.get(url)
