@@ -141,7 +141,7 @@ class AwhereUpdate(object):
                              'temperature_min': result['temperatures']['min']
                             }
                     obsvData.append(myRow)
-                return obsvData
+            return obsvData
     
     def flatten_batch(self, results):
         obsvData = []
