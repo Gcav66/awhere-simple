@@ -58,6 +58,8 @@ class AwhereUpdate(object):
                    'wind_avg': result['wind']['average'],
                    'temp_max': float(result['temperatures']['max']),
                    'temp_min': float(result['temperatures']['min']),
+                   'latitude': result['location']['latitude'],
+                   'longitude': result['location']['longitude'],
                    'id': str(index)
                   }
           obsvData.append(myRow)
