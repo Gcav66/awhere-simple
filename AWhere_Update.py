@@ -24,8 +24,8 @@ class AwhereUpdate(object):
     
 
     def __init__(self, key, secret):
-        self.key = key
-        self.secret = secret
+        self.key = key.strip()
+        self.secret = secret.strip()
         self.location_url = 'https://api.awhere.com/v2/weather/locations'
 
 
