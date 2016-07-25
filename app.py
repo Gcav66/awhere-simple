@@ -6,6 +6,7 @@ import os
 
 def create_app():
     app=Flask(__name__)
+    app.config['PROPAGATE_EXCEPTIONS'] = True
     return app
 
 app = create_app()
