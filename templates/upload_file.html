@@ -28,10 +28,10 @@
           <label for="exampleInputEmail2">Longitude</label>
           <input type="text" class="form-control" name="longitude_input" placeholder="-8.0">
           <br>
-          <label for="dateInput1">Enter a date in MM-YYYY-DD format (11-2015-01). If choosing "Forecast", leave this field blank</label>
-          <input type="text" class="form-control" name="start_date" min="2000-01-01" placeholder="01-2016-01"><br>
-          <label for="dateInput2">Enter a date in MM-YYYY-DD format (12-2015-01). If choosing "Forecast", leave this field blank</label>
-          <input type="text" class="form-control" name="end_date" min="2000-01-02" placeholder="01-2016-02"><br>
+          <label for="dateInput1">Enter a starting date for historical data (if using Firefox, format as MM-YYYY-DD). If choosing "Forecast", leave this field blank</label>
+          <input type="date" class="form-control" name="start_date" min="2005-01-01" placeholder="01-2016-01"><br>
+          <label for="dateInput2">Enter an ending date for historical data (if using Firefox, format as MM-YYYY-DD. If choosing "Forecast", leave this field blank</label>
+          <input type="date" class="form-control" name="end_date" min="2005-01-02" placeholder="01-2016-02"><br>
         </div>
         <button type="submit" name='btn' value='observation' class="btn btn-default">Get Historical Data</button>
         <button type="submit" name='btn' value='forecast' class="btn btn-default">Get Forecast Data</button>
