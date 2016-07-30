@@ -21,12 +21,16 @@ app = create_app()
 def get_single_data(akey, asec, mlat, mlong, sdate, edate):
     client = AwhereUpdate(akey, asec)
     response = client.single_call(mlat, mlong, sdate, edate)
-    clean = client.flatten_single(response)
-    df = pd.DataFrame(clean)
-    #xls_name = mlat + "_" + mlong + "_" + sdate + "_" + edate + ".xlsx"
-    xls_name = "GDA_AWHERE_Weather.xlsx"
-    df_xls = df.to_excel(xls_name, index=False)
-    return xls_name
+    if 'errorId' in response:
+        error_message = response['detailedMessage']
+        return error_message
+    else:
+        clean = client.flatten_single(response)
+        df = pd.DataFrame(clean)
+        #xls_name = mlat + "_" + mlong + "_" + sdate + "_" + edate + ".xlsx"
+        xls_name = "GDA_AWHERE_Weather.xlsx"
+        df_xls = df.to_excel(xls_name, index=False)
+        return xls_name
 
 def get_forecast(akey, asec, mlat, mlong, sdate, edate):
     client = AwhereUpdate(akey, asec)
@@ -55,7 +59,10 @@ def upload():
             sdate = request.form['start_date']
             edate = request.form['end_date']
             xls_name = get_single_data(akey, asec, mlat, mlong, sdate, edate)
-            return send_file(xls_name, as_attachment=True)
+            if xls_name <> "GDA_AWHERE_Weather.xlsx":
+                return render_template(template, error_message=xls_name)
+            else:
+                return send_file(xls_name, as_attachment=True)
         if request.form['btn'] == 'forecast':
             akey = request.form['api_key']
             asec = request.form['api_secret']
