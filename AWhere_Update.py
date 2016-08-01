@@ -27,6 +27,7 @@ class AwhereUpdate(object):
         self.key = key.strip()
         self.secret = secret.strip()
         self.location_url = 'https://api.awhere.com/v2/weather/locations'
+        self.pet_url = 'https://api.awhere.com/v2/agronomics/fields'
 
 
     def fetch_token(self):
@@ -174,6 +175,30 @@ class AwhereUpdate(object):
                             }
                 obsvData.append(myRow)
         return obsvData
+
+    def get_pet(self, mylat, mylong, startDate, endDate):
+        url = 'https://api.awhere.com/v2/agronomics/locations/'+ str(mylat) + "," + \
+               str(mylong) + '/agronomicvalues/' + str(startDate) + "," + str(endDate)
+        client = self.fetch_token()
+
+        result = client.get(url)
+        return result.json()
+        
+    def flatten_pet(self, pet_result):
+        myData = []
+        try:
+            for result in pet_result['dailyValues']:
+                myRow = {'pet': result['pet']['amount'],
+                         'gdd': result['gdd'],
+                         'ppet': result['ppet'],
+                         'units': 'mm',
+                         'date': result['date'],
+                         'latitude': pet_result['location']['latitude'],
+                         'longitude': pet_result['location']['longitude']}
+                myData.append(myRow)
+            return myData
+        except KeyError:
+            return pet_result
 """        
 def create_batch(myfile, start_year, end_year):
     myData = {}

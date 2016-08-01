@@ -47,6 +47,17 @@ def get_forecast(akey, asec, mlat, mlong, sdate, edate):
     df_xls = ordered_df.to_excel(xls_name, index=False)
     return xls_name
 
+def get_pet(akey, asec, mlat, mlong, sdate, edate):
+    client = AwhereUpdate(akey, asec)
+    response = client.get_pet(mlat, mlong, sdate, edate)
+    flat = client.flatten_pet(response)
+    df = pd.DataFrame(flat)
+    pet_order = ['date', 'latitude', 'longitude', 'gdd', 'pet', 'ppet', 'units']
+    ordered_df = df[pet_order]
+    xls_name = "GDA_AWHERE_PET_" + mlat + "_" + mlong + "_" + sdate + "_" + edate +".xlsx"
+    df_xls = ordered_df.to_excel(xls_name, index=False)
+    return xls_name
+
 @app.route("/", methods=['GET', 'POST'])
 def upload():
     template = 'upload_file.html'
@@ -71,6 +82,15 @@ def upload():
             sdate = request.form['start_date']
             edate = request.form['end_date']
             xls_name = get_forecast(akey, asec, mlat, mlong, sdate, edate)
+            return send_file(xls_name, as_attachment=True)
+        if request.form['btn'] == 'pet':
+            akey = request.form['api_key']
+            asec = request.form['api_secret']
+            mlat = request.form['latitude_input']
+            mlong = request.form['longitude_input']
+            sdate = request.form['start_date']
+            edate = request.form['end_date']
+            xls_name = get_pet(akey, asec, mlat, mlong, sdate, edate)
             return send_file(xls_name, as_attachment=True)
 
         """
