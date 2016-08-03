@@ -188,13 +188,22 @@ class AwhereUpdate(object):
         myData = []
         try:
             for result in pet_result['dailyValues']:
-                myRow = {'pet': result['pet']['amount'],
-                         'gdd': result['gdd'],
-                         'ppet': result['ppet'],
-                         'units': 'mm',
-                         'date': result['date'],
-                         'latitude': pet_result['location']['latitude'],
-                         'longitude': pet_result['location']['longitude']}
+                try:
+                    myRow = {'pet': result['pet']['amount'],
+                             'gdd': result['gdd'],
+                             'ppet': result['ppet'],
+                             'units': 'mm',
+                             'date': result['date'],
+                             'latitude': pet_result['location']['latitude'],
+                             'longitude': pet_result['location']['longitude']}
+                except TypeError:
+                    myRow = {'pet': result['pet'],
+                             'gdd': result['gdd'],
+                             'ppet': result['ppet'],
+                             'units': 'mm',
+                             'date': result['date'],
+                             'latitude': pet_result['location']['latitude'],
+                             'longitude': pet_result['location']['longitude']}
                 myData.append(myRow)
             return myData
         except KeyError:
