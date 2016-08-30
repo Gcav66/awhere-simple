@@ -177,8 +177,18 @@ class AwhereUpdate(object):
         return obsvData
 
     def get_pet(self, mylat, mylong, startDate, endDate):
+        if len(startDate.split("-")[0]) == 4:
+            year_0 = startDate.split("-")[0]
+            month_0 = startDate.split("-")[1]
+            day_0 = startDate.split("-")[2]
+            year_1 = endDate.split("-")[0]
+            month_1 = endDate.split("-")[1]
+            day_1 = endDate.split("-")[2]
+            startDate = str(month_0) + "-" + str(year_0) + "-" + str(day_0)
+            endDate = str(month_1) + "-" + str(year_1) + "-" + str(day_1)
         url = 'https://api.awhere.com/v2/agronomics/locations/'+ str(mylat) + "," + \
                str(mylong) + '/agronomicvalues/' + str(startDate) + "," + str(endDate)
+        print url
         client = self.fetch_token()
 
         result = client.get(url)
@@ -207,6 +217,7 @@ class AwhereUpdate(object):
                 myData.append(myRow)
             return myData
         except KeyError:
+            print pet_result
             return pet_result
 """        
 def create_batch(myfile, start_year, end_year):

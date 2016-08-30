@@ -51,7 +51,10 @@ def get_pet(akey, asec, mlat, mlong, sdate, edate):
     client = AwhereUpdate(akey, asec)
     response = client.get_pet(mlat, mlong, sdate, edate)
     flat = client.flatten_pet(response)
-    df = pd.DataFrame(flat)
+    try:
+        df = pd.DataFrame(flat)
+    except ValueError:
+        return flat
     pet_order = ['date', 'latitude', 'longitude', 'gdd', 'pet', 'ppet', 'units']
     ordered_df = df[pet_order]
     xls_name = "GDA_AWHERE_PET_" + mlat + "_" + mlong + "_" + sdate + "_" + edate +".xlsx"
@@ -89,8 +92,12 @@ def upload():
             mlat = request.form['latitude_input']
             mlong = request.form['longitude_input']
             sdate = request.form['start_date']
+            print sdate
             edate = request.form['end_date']
+            print edate
             xls_name = get_pet(akey, asec, mlat, mlong, sdate, edate)
+            if ".xlsx" not in xls_name:
+                return xls_name['detailedMessage']
             return send_file(xls_name, as_attachment=True)
 
         """
