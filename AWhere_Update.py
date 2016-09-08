@@ -9,7 +9,7 @@ from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 from calendar import monthrange
 import csv
-
+from datetime import date, timedelta
 
 key = ''
 secret = ''
@@ -176,6 +176,65 @@ class AwhereUpdate(object):
                 obsvData.append(myRow)
         return obsvData
 
+    def format_date(self, startDate, endDate):
+        if len(startDate.split("-")[0]) == 4:
+            year_0 = startDate.split("-")[0]
+            month_0 = startDate.split("-")[1]
+            day_0 = startDate.split("-")[2]
+            year_1 = endDate.split("-")[0]
+            month_1 = endDate.split("-")[1]
+            day_1 = endDate.split("-")[2]
+            startDate_str = str(month_0) + "-" + str(year_0) + "-" + str(day_0)
+            endDate_str = str(month_1) + "-" + str(year_1) + "-" + str(day_1)
+            startDate_date = date(int(year_0), int(month_0), int(day_0))
+            endDate_date = date(int(year_1), int(month_1), int(day_1))
+        else:
+            month_0 = startDate.split("-")[0]
+            year_0 = startDate.split("-")[1]
+            day_0 = startDate.split("-")[2]
+            month_1 = endDate.split("-")[0]
+            year_1 = endDate.split("-")[1]
+            day_1 = endDate.split("-")[2]
+            startDate_str = startDate
+            endDate_str = endDate
+            startDate_date = date(int(year_0), int(month_0), int(day_0))
+            endDate_date = date(int(year_1), int(month_1), int(day_1))
+        return startDate_str, endDate_str, startDate_date, endDate_date
+
+    def perdelta(self, start, end, delta):
+        myDates = []
+        curr = start
+        while curr < end:
+            #yield curr
+            new_start = '{:%m}'.format(curr)+ "-" + '{:%Y}'.format(curr) + "-" + '{:%d}'.format(curr)
+            myDates.append(new_start)
+            curr += delta
+        new_end = '{:%m}'.format(end)+ "-" + '{:%Y}'.format(end) + "-" + '{:%d}'.format(end)
+        myDates.append(new_end)
+        return myDates
+
+    def build_pet_url(self, mylat, mylong, startDate, endDate):
+        myUrls = []
+        startDate_str, endDate_str, startDate_date, endDate_date = self.format_date(startDate, endDate)
+        myDates = self.perdelta(startDate_date, endDate_date, timedelta(days=120))
+        for i, date in enumerate(myDates):
+            try:
+                url = ('https://api.awhere.com/v2/agronomics/locations/'+ str(mylat) +
+                "," + str(mylong) + '/agronomicvalues/' + str(date) + "," + str(myDates[i+1]))
+                myUrls.append(url)
+            except IndexError:
+                continue
+        return myUrls
+
+    def make_pet_call(self, myUrls):
+        results = []
+        for url in myUrls:
+            client = self.fetch_token()
+            result = client.get(url)
+            results.append(result.json())
+        return results
+
+
     def get_pet(self, mylat, mylong, startDate, endDate):
         if len(startDate.split("-")[0]) == 4:
             year_0 = startDate.split("-")[0]
@@ -193,6 +252,33 @@ class AwhereUpdate(object):
 
         result = client.get(url)
         return result.json()
+
+    def flatten_pets(self, pet_results):
+        myData = []
+        try:
+            for pet_result in pet_results:
+                for result in pet_result['dailyValues']:
+                    try:
+                        myRow = {'pet': result['pet']['amount'],
+                                 'gdd': result['gdd'],
+                                 'ppet': result['ppet'],
+                                 'units': 'mm',
+                                 'date': result['date'],
+                                 'latitude': pet_result['location']['latitude'],
+                                 'longitude': pet_result['location']['longitude']}
+                    except TypeError:
+                        myRow = {'pet': result['pet'],
+                                 'gdd': result['gdd'],
+                                 'ppet': result['ppet'],
+                                 'units': 'mm',
+                                 'date': result['date'],
+                                 'latitude': pet_result['location']['latitude'],
+                                 'longitude': pet_result['location']['longitude']}
+                    myData.append(myRow)
+            return myData
+        except KeyError:
+            print pet_result
+            return pet_result
         
     def flatten_pet(self, pet_result):
         myData = []

@@ -49,8 +49,11 @@ def get_forecast(akey, asec, mlat, mlong, sdate, edate):
 
 def get_pet(akey, asec, mlat, mlong, sdate, edate):
     client = AwhereUpdate(akey, asec)
-    response = client.get_pet(mlat, mlong, sdate, edate)
-    flat = client.flatten_pet(response)
+    #response = client.get_pet(mlat, mlong, sdate, edate)
+    #flat = client.flatten_pet(response)
+    pet_urls = client.build_pet_url(mlat, mlong, sdate, edate)
+    pet_results = client.make_pet_call(pet_urls)
+    flat = client.flatten_pets(pet_results)
     try:
         df = pd.DataFrame(flat)
     except ValueError:
