@@ -59,7 +59,7 @@ def get_pet(akey, asec, mlat, mlong, sdate, edate):
     except ValueError:
         return flat
     pet_order = ['date', 'latitude', 'longitude', 'gdd', 'pet', 'ppet', 'units']
-    ordered_df = df[pet_order]
+    ordered_df = df[pet_order].drop_duplicates()
     xls_name = "GDA_AWHERE_PET_" + mlat + "_" + mlong + "_" + sdate + "_" + edate +".xlsx"
     df_xls = ordered_df.to_excel(xls_name, index=False)
     return xls_name
