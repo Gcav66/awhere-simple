@@ -20,7 +20,19 @@ app = create_app()
 
 def get_single_data(akey, asec, mlat, mlong, sdate, edate):
     client = AwhereUpdate(akey, asec)
-    response = client.single_call(mlat, mlong, sdate, edate)
+    #response = client.single_call(mlat, mlong, sdate, edate)
+    obs_urls = client.build_obs_url(mlat, mlong, sdate, edate)
+    obs_results = client.make_pet_call(obs_urls)
+    flat = client.flatten_singles(obs_results)
+    print type(flat)
+    df = pd.DataFrame(flat)
+    order = ['date', 'latitude', 'longitude', 'temp_max', 'temp_min',
+    'precipitation', 'wind_avg', 'humid_max', 'humid_min', 'solar']
+    ordered_df = df[order].drop_duplicates()
+    xls_name = "GDA_AWHERE_Weather.xlsx"
+    df_xls = ordered_df.to_excel(xls_name, index=False)
+    return xls_name
+    """
     if 'errorId' in response:
         error_message = response['detailedMessage']
         return error_message
@@ -31,6 +43,7 @@ def get_single_data(akey, asec, mlat, mlong, sdate, edate):
         xls_name = "GDA_AWHERE_Weather.xlsx"
         df_xls = df.to_excel(xls_name, index=False)
         return xls_name
+    """
 
 def get_forecast(akey, asec, mlat, mlong, sdate, edate):
     client = AwhereUpdate(akey, asec)

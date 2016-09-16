@@ -48,10 +48,10 @@ class AwhereUpdate(object):
 
 
     def flatten_single(self, results):
-      obsvData = []
-      for index, result in enumerate(results['observations']):
-          myRow = {}
-          myRow = {'date': result['date'],
+        obsvData = []
+        for index, result in enumerate(results['observations']):
+            myRow = {}
+            myRow = {'date': result['date'],
                    'precipitation': result['precipitation']['amount'],
                    'solar': result['solar']['amount'],
                    'humid_max': result['relativeHumidity']['max'],
@@ -63,8 +63,27 @@ class AwhereUpdate(object):
                    'longitude': result['location']['longitude'],
                    'id': str(index)
                   }
-          obsvData.append(myRow)
-      return obsvData
+            obsvData.append(myRow)
+        return obsvData
+
+    def flatten_singles(self, obs_results):
+        obsvData = []
+        for results in obs_results:
+            for index, result in enumerate(results['observations']):
+              myRow = {}
+              myRow = {'date': result['date'],
+                       'precipitation': result['precipitation']['amount'],
+                       'solar': result['solar']['amount'],
+                       'humid_max': result['relativeHumidity']['max'],
+                       'humid_min': result['relativeHumidity']['min'],
+                       'wind_avg': result['wind']['average'],
+                       'temp_max': float(result['temperatures']['max']),
+                       'temp_min': float(result['temperatures']['min']),
+                       'latitude': result['location']['latitude'],
+                       'longitude': result['location']['longitude']
+                      }
+              obsvData.append(myRow)
+        return obsvData
 
     def single_forecast(self, mylat, mylong, startdate='', enddate=''):
 
@@ -221,6 +240,19 @@ class AwhereUpdate(object):
             try:
                 url = ('https://api.awhere.com/v2/agronomics/locations/'+ str(mylat) +
                 "," + str(mylong) + '/agronomicvalues/' + str(date) + "," + str(myDates[i+1]))
+                myUrls.append(url)
+            except IndexError:
+                continue
+        return myUrls
+
+    def build_obs_url(self, mylat, mylong, startDate, endDate):
+        myUrls = []
+        startDate_str, endDate_str, startDate_date, endDate_date = self.format_date(startDate, endDate)
+        myDates = self.perdelta(startDate_date, endDate_date, timedelta(days=120))
+        for i, date in enumerate(myDates):
+            try:
+                url = (self.location_url + "/" + str(mylat) +
+                "," + str(mylong) + '/observations/' + str(date) + "," + str(myDates[i+1]))
                 myUrls.append(url)
             except IndexError:
                 continue
