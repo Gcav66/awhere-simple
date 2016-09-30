@@ -252,7 +252,7 @@ class AwhereUpdate(object):
         for i, date in enumerate(myDates):
             try:
                 url = (self.location_url + "/" + str(mylat) +
-                "," + str(mylong) + '/observations/' + str(date) + "," + str(myDates[i+1]))
+                "," + str(mylong) + '/observations/' + str(date) + "," + str(myDates[i+1]) + "?limit=120")
                 myUrls.append(url)
             except IndexError:
                 continue
