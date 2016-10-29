@@ -69,7 +69,7 @@
       <div class="container">
         <div class="row">
           <div class="col-mid-1">
-            <h1>Get Weather Data for Single Location</h1>
+            <h1>Get Historical Data for Single Location</h1>
           </div>
           <form action="" method=post>
             <div class="form-group">
@@ -87,11 +87,11 @@
               <br>
               <label for="dateInput1">Enter a starting date for historical data (if using Firefox, format as MM-YYYY-DD). If choosing "Forecast", leave this field blank</label>
               <input type="date" class="form-control" name="start_date" min="2005-01-01" placeholder="01-2016-01"><br>
-              <label for="dateInput2">Enter an ending date for historical data (if using Firefox, format as MM-YYYY-DD. If choosing "Forecast", leave this field blank</label>
+              <label for="dateInput2">Enter an ending date for historical data (if using Firefox, format as MM-YYYY-DD 
+              </label>
               <input type="date" class="form-control" name="end_date" min="2005-01-02" placeholder="01-2016-02"><br>
             </div>
             <button type="submit" name='btn' value='observation' class="btn btn-default">Get Historical Data</button>
-            <button type="submit" name='btn' value='forecast' class="btn btn-default">Get Forecast Data</button>
             <button type="submit" name='btn' value='pet' class="btn btn-default">Get Historical PET Data</button>
           </form>
         </div>
