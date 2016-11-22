@@ -65,6 +65,7 @@ def get_pet(akey, asec, mlat, mlong, sdate, edate):
     df_xls = ordered_df.to_excel(xls_name, index=False)
     return xls_name
 
+"""
 @app.route("/", methods=['GET', 'POST'])
 def upload():
     template = 'upload_file.html'
@@ -104,8 +105,8 @@ def upload():
                 return xls_name['detailedMessage']
             return send_file(xls_name, as_attachment=True)
     return render_template(template)
-
-@app.route("/home", methods=["GET", "POST"])
+"""
+@app.route("/", methods=["GET", "POST"])
 def index():
     return render_template("home.html")
 
