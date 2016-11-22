@@ -32,18 +32,6 @@ def get_single_data(akey, asec, mlat, mlong, sdate, edate):
     xls_name = "GDA_AWHERE_Weather.xlsx"
     df_xls = ordered_df.to_excel(xls_name, index=False)
     return xls_name
-    """
-    if 'errorId' in response:
-        error_message = response['detailedMessage']
-        return error_message
-    else:
-        clean = client.flatten_single(response)
-        df = pd.DataFrame(clean)
-        #xls_name = mlat + "_" + mlong + "_" + sdate + "_" + edate + ".xlsx"
-        xls_name = "GDA_AWHERE_Weather.xlsx"
-        df_xls = df.to_excel(xls_name, index=False)
-        return xls_name
-    """
 
 def get_forecast(akey, asec, mlat, mlong, sdate, edate):
     client = AwhereUpdate(akey, asec)
@@ -115,14 +103,55 @@ def upload():
             if ".xlsx" not in xls_name:
                 return xls_name['detailedMessage']
             return send_file(xls_name, as_attachment=True)
-
-        """
-        myfile = request.files['inputFile']
-        myfile.save(myfile.filename)
-        df = pd.DataFrame(myfile.filename)
-        return send_file("foo.xlsx", as_attachment=True)
-        """
     return render_template(template)
+
+@app.route("/home", methods=["GET", "POST"])
+def index():
+    return render_template("home.html")
+
+@app.route("/observations", methods=["GET", "POST"])
+def observations():
+    if request.method == 'POST':
+        if request.form['btn'] == 'observation':
+            akey = request.form['api_key']
+            asec = request.form['api_secret']
+            mlat = request.form['latitude_input']
+            mlong = request.form['longitude_input']
+            sdate = request.form['start_date']
+            edate = request.form['end_date']
+            xls_name = get_single_data(akey, asec, mlat, mlong, sdate, edate)
+            if xls_name <> "GDA_AWHERE_Weather.xlsx":
+                return render_template(template, error_message=xls_name)
+            else:
+                return send_file(xls_name, as_attachment=True)
+        if request.form['btn'] == 'pet':
+            akey = request.form['api_key']
+            asec = request.form['api_secret']
+            mlat = request.form['latitude_input']
+            mlong = request.form['longitude_input']
+            sdate = request.form['start_date']
+            print sdate
+            edate = request.form['end_date']
+            print edate
+            xls_name = get_pet(akey, asec, mlat, mlong, sdate, edate)
+            if ".xlsx" not in xls_name:
+                return xls_name['detailedMessage']
+            return send_file(xls_name, as_attachment=True)
+    return render_template("observations.html")
+
+@app.route("/forecasts", methods=["GET", "POST"])
+def forecasts():
+    if request.method == 'POST':
+        if request.form['btn'] == 'forecast':
+            akey = request.form['api_key']
+            asec = request.form['api_secret']
+            mlat = request.form['latitude_input']
+            mlong = request.form['longitude_input']
+            sdate = request.form['start_date']
+            edate = request.form['end_date']
+            xls_name = get_forecast(akey, asec, mlat, mlong, sdate, edate)
+            return send_file(xls_name, as_attachment=True)
+    return render_template("forecasts.html")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
