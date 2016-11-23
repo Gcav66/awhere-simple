@@ -154,6 +154,10 @@ def forecasts():
             return send_file(xls_name, as_attachment=True)
     return render_template("forecasts.html")
 
+@app.route("/bulk", methods=["GET", "POST"])
+def bulk():
+    return render_template("bulk.html")
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=int(port), debug=True)

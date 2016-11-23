@@ -2,7 +2,23 @@
 	background-image: url("field.jpg");
 }*/
 
+body {
+	background: url(../static/intro-bg.jpg) no-repeat bottom center scroll;
+}
 section {
     padding: 100px 0;
+}
+
+#contact{
+	color: white;
+}
+
+#subtext{
+	color: white;
+}
+
+#title{
+	background-color: white;
+	display: inline;
 }
 
