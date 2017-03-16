@@ -48,6 +48,21 @@ def get_forecast(akey, asec, mlat, mlong, sdate, edate):
     df_xls = ordered_df.to_excel(xls_name, index=False)
     return xls_name
 
+def get_forecast_simple(akey, asec, mlat, mlong):
+    client = AwhereUpdate(akey, asec)
+    response = client.single_forecast(mlat, mlong)
+    flat = client.flatten_forecast(response)
+    df = pd.DataFrame(flat)
+    forecast_order = ['startTime', 'endTime', 'temperature_max', 'temperature_min',
+                  'temperature_unit', 'precipitation_amount', 'precipitation_chance',
+                  'precipitation_units', 'precipitation_chance', 'wind_average',
+                  'wind_max', 'wind_min', 'wind_units', 'sky_sunshine', 'solar_amount',
+                  'solar_units']
+    ordered_df = df[forecast_order]
+    xls_name = "GDA_AWHERE_Forecast_Weather.xlsx"
+    df_xls = ordered_df.to_excel(xls_name, index=False)
+    return xls_name
+
 def get_pet(akey, asec, mlat, mlong, sdate, edate):
     client = AwhereUpdate(akey, asec)
     #response = client.get_pet(mlat, mlong, sdate, edate)
@@ -148,9 +163,9 @@ def forecasts():
             asec = request.form['api_secret']
             mlat = request.form['latitude_input']
             mlong = request.form['longitude_input']
-            sdate = request.form['start_date']
-            edate = request.form['end_date']
-            xls_name = get_forecast(akey, asec, mlat, mlong, sdate, edate)
+            #sdate = request.form['start_date']
+            #edate = request.form['end_date']
+            xls_name = get_forecast_simple(akey, asec, mlat, mlong)#, sdate, edate)
             return send_file(xls_name, as_attachment=True)
     return render_template("forecasts.html")
 
